@@ -31,7 +31,31 @@ export function GameScreen() {
   const { submitScore, gameOver, endSession } = useCloudArcade();
   const [gameState, setGameState] = useState<EngineState | null>(null);
   const [sessionTime, setSessionTime] = useState(0);
+  const [scale, setScale] = useState(1);
   const sessionRef = useRef<ReturnType<typeof setInterval>>();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Calculate scale to fit game in viewport
+  useEffect(() => {
+    const calculateScale = () => {
+      const gameW = GRID_WIDTH * CELL_SIZE + SIDEBAR_WIDTH * 2;
+      const gameH = GRID_HEIGHT * CELL_SIZE + 78 + 52; // header + footer heights
+      const padding = 24;
+      
+      const availableW = window.innerWidth - padding;
+      const availableH = window.innerHeight - padding;
+      
+      const scaleX = availableW / gameW;
+      const scaleY = availableH / gameH;
+      const newScale = Math.min(scaleX, scaleY, 1.2); // Cap at 1.2x max
+      
+      setScale(Math.max(0.4, newScale)); // Min 0.4x
+    };
+
+    calculateScale();
+    window.addEventListener('resize', calculateScale);
+    return () => window.removeEventListener('resize', calculateScale);
+  }, []);
 
   // Session timer
   useEffect(() => {
@@ -101,8 +125,15 @@ export function GameScreen() {
   const tierTarget = next ? `${next.name} TIER TARGET` : 'MAX TIER REACHED';
 
   return (
-    <div className="screen screen--game">
-      <div className="game-box" style={{ width: totalW }}>
+    <div className="screen screen--game" ref={containerRef}>
+      <div 
+        className="game-box" 
+        style={{ 
+          width: totalW,
+          transform: `scale(${scale})`,
+          transformOrigin: 'center center',
+        }}
+      >
 
         {/* ═══ TOP HEADER ═══ */}
         <div className="game-header">
