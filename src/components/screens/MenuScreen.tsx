@@ -1,11 +1,11 @@
 /**
- * Menu Screen Component
- * DELETE THIS and replace with your game's menu
+ * CubeStacker Menu Screen
+ * Premium glassmorphic main menu
  */
 
 import { useGameContext } from '../../context/GameContext';
 import { useCloudArcade } from '../../hooks/useCloudArcade';
-import { Button } from '../ui/Button';
+import { STAGES } from '../../game/constants';
 
 export function MenuScreen() {
   const { state, dispatch } = useGameContext();
@@ -14,28 +14,67 @@ export function MenuScreen() {
   const handleStart = () => {
     startSession();
     dispatch({ type: 'RESET_GAME' });
-    dispatch({ type: 'SET_STATE', payload: 'playing' });
   };
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-zinc-950 to-background">
-      <div className="flex flex-col items-center gap-8 text-center p-8">
-        <h1 className="text-4xl font-semibold tracking-tight">Game Template</h1>
-        <p className="text-lg text-zinc-500 -mt-4">CloudArcade Integration Test</p>
-
-        <div className="flex flex-col gap-3 min-w-[200px]">
-          <Button onClick={handleStart} variant="primary" size="large">
-            Open Test Panel
-          </Button>
+    <div className="screen screen--menu">
+      <div className="menu-card">
+        <div className="menu-header">
+          <h1 className="logo">
+            <span className="logo-cube">CUBE</span>
+            <span className="logo-stacker">STACKER</span>
+          </h1>
+          <p className="menu-tagline">Stack to the top. How far can you go?</p>
         </div>
-
-        <div className="mt-2 text-xs">
-          {state.isPlatformConnected ? (
-            <span className="text-green-500">● Connected to CloudArcade</span>
-          ) : (
-            <span className="text-zinc-500">○ Running Standalone</span>
+        
+        <div className="menu-body">
+          {state.highScore > 0 && (
+            <div className="menu-highscore">
+              <span className="highscore-value">{state.highScore}</span>
+              <span className="highscore-label">BEST</span>
+            </div>
           )}
+          
+          <button className="btn btn--primary btn--large" onClick={handleStart}>
+            PLAY
+          </button>
+          
+          <div className="menu-stages">
+            <span className="stages-label">STAGES</span>
+            <div className="stages-list">
+              {STAGES.map((stage) => (
+                <div 
+                  key={stage.name} 
+                  className="stage-chip"
+                  style={{ '--stage-color': stage.color } as React.CSSProperties}
+                >
+                  <span className="stage-chip-dot" />
+                  <span className="stage-chip-name">{stage.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+        
+        <div className="menu-footer-inner">
+          <div className="menu-instructions">
+            <span className="instruction-key">SPACE</span>
+            <span className="instruction-or">or</span>
+            <span className="instruction-key">TAP</span>
+            <span className="instruction-text">to stop blocks</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="menu-footer">
+        {state.isPlatformConnected ? (
+          <span className="status status--connected">
+            <span className="status-dot" />
+            Connected
+          </span>
+        ) : (
+          <span className="status">Standalone Mode</span>
+        )}
       </div>
     </div>
   );

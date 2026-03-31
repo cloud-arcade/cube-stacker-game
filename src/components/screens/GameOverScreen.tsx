@@ -1,57 +1,72 @@
 /**
- * Game Over Screen Component
- * DELETE THIS and replace with your game's game over screen
+ * CubeStacker Game Over Screen
+ * Premium glassmorphic results display
  */
 
-import { useEffect } from 'react';
 import { useGameContext } from '../../context/GameContext';
 import { useCloudArcade } from '../../hooks/useCloudArcade';
-import { Button } from '../ui/Button';
+import { STAGES, getStageForLevel } from '../../game/constants';
+import { resetEngine } from '../../game/engine';
 
 export function GameOverScreen() {
   const { state, dispatch } = useGameContext();
-  const { submitScore, endSession, startSession } = useCloudArcade();
+  const { startSession } = useCloudArcade();
 
-  // Submit score and end session on mount
-  useEffect(() => {
-    submitScore(state.score, { level: state.level });
-    endSession();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const stageIndex = getStageForLevel(state.level);
+  const stage = STAGES[stageIndex];
 
   const handlePlayAgain = () => {
+    resetEngine();
     startSession();
     dispatch({ type: 'RESET_GAME' });
-    dispatch({ type: 'SET_STATE', payload: 'playing' });
   };
 
   const handleMenu = () => {
-    dispatch({ type: 'RESET_GAME' });
-    dispatch({ type: 'SET_STATE', payload: 'menu' });
+    resetEngine();
+    dispatch({ type: 'SET_SCREEN', payload: 'menu' });
   };
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-zinc-950 to-background">
-      <div className="flex flex-col items-center gap-6 text-center p-8">
-        <h1 className="text-4xl font-semibold text-red-500 tracking-tight">Session Ended</h1>
-        
-        <div className="flex flex-col items-center gap-2">
-          <p className="flex flex-col gap-1">
-            <span className="text-sm text-zinc-500">Final Score</span>
-            <strong className="text-5xl font-bold font-mono text-green-500">{state.score}</strong>
-          </p>
-          {state.score >= state.highScore && state.score > 0 && (
-            <p className="text-amber-500 font-medium animate-pulse-slow">New High Score!</p>
+    <div className="screen screen--gameover">
+      <div className="gameover-card">
+        <div className="gameover-header">
+          <h1 className="gameover-title">GAME OVER</h1>
+          {state.isNewHighScore && (
+            <div className="gameover-newhigh">
+              <span className="newhigh-star">★</span>
+              NEW BEST
+              <span className="newhigh-star">★</span>
+            </div>
           )}
         </div>
 
-        <div className="flex flex-col gap-3 min-w-[200px]">
-          <Button onClick={handlePlayAgain} variant="primary" size="large">
-            Test Again
-          </Button>
-          <Button onClick={handleMenu} variant="secondary" size="large">
-            Back to Menu
-          </Button>
+        <div className="gameover-stats">
+          <div className="gameover-score">
+            <span className="score-number">{state.score}</span>
+            <span className="score-label">LEVELS CLEARED</span>
+          </div>
+
+          <div className="gameover-stage">
+            <span className="stage-reached-label">REACHED</span>
+            <div className="stage-reached-badge" style={{ '--stage-color': stage.color } as React.CSSProperties}>
+              <span className="stage-dot-glow" />
+              <span className="stage-name">{stage.name}</span>
+            </div>
+          </div>
+
+          <div className="gameover-best">
+            <span className="best-value">{state.highScore}</span>
+            <span className="best-label">BEST</span>
+          </div>
+        </div>
+
+        <div className="gameover-actions">
+          <button className="btn btn--primary btn--large" onClick={handlePlayAgain}>
+            PLAY AGAIN
+          </button>
+          <button className="btn btn--ghost" onClick={handleMenu}>
+            MENU
+          </button>
         </div>
       </div>
     </div>

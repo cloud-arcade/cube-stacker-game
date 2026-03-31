@@ -4,16 +4,16 @@ import { Button } from './Button';
 export function PauseOverlay() {
   const { state, dispatch } = useGameContext();
 
-  if (state.gameState !== 'paused') {
+  if (state.screen !== 'playing') {
     return null;
   }
 
   const handleResume = () => {
-    dispatch({ type: 'SET_STATE', payload: 'playing' });
+    dispatch({ type: 'SET_SCREEN', payload: 'playing' });
   };
 
   const handleQuit = () => {
-    dispatch({ type: 'SET_STATE', payload: 'menu' });
+    dispatch({ type: 'SET_SCREEN', payload: 'menu' });
   };
 
   return (
@@ -27,8 +27,8 @@ export function PauseOverlay() {
             <span className="text-2xl font-bold font-mono text-green-500">{state.score}</span>
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-xs text-zinc-500 uppercase tracking-wide">Lives</span>
-            <span className="text-2xl font-bold font-mono text-green-500">{state.lives}</span>
+            <span className="text-xs text-zinc-500 uppercase tracking-wide">Stage</span>
+            <span className="text-2xl font-bold font-mono text-green-500">{state.stage}</span>
           </div>
           <div className="flex flex-col gap-1">
             <span className="text-xs text-zinc-500 uppercase tracking-wide">Level</span>

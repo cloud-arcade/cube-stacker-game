@@ -77,7 +77,7 @@ export function useCloudArcade(options: CloudArcadeOptions = {}) {
         case 'USER_INFO':
           dispatch({ type: 'SET_PLATFORM_CONNECTED', payload: true });
           dispatch({ type: 'SET_USER_ID', payload: data.payload.userId || data.payload.guestId || null });
-          dispatch({ type: 'SET_STATE', payload: 'menu' });
+          dispatch({ type: 'SET_SCREEN', payload: 'menu' });
           break;
 
         case 'SESSION_STARTED':

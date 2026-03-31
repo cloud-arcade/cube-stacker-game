@@ -1,2 +1,2 @@
-export { GameProvider, useGameContext, useGameState, useScore } from './GameContext';
-export type { GameState } from './GameContext';
+export { GameProvider, useGameContext, useGameScreen, useScore } from './GameContext';
+export type { GameScreen } from './GameContext';
