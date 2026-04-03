@@ -90,6 +90,20 @@ export function GameScreen() {
   }, [dispatch, submitScore, gameOver, endSession]);
 
   const handleLock = useCallback(() => { getEngine().lockRow(); }, []);
+  const lastTouchRef = useRef<number>(0);
+  
+  // Wrapper touch handler with its own debounce for wrapper-only touches
+  const handleWrapperTouch = useCallback((e: React.TouchEvent) => {
+    // Prevent double-tap issues
+    const now = Date.now();
+    if (now - lastTouchRef.current < 100) return;
+    lastTouchRef.current = now;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    handleLock();
+  }, [handleLock]);
+  
   useStackerInput({ onAction: handleLock, enabled: true });
 
   if (!gameState) {
@@ -270,7 +284,17 @@ export function GameScreen() {
           </div>
 
           {/* Canvas with glass overlay */}
-          <div className="game-canvas-wrap" style={{ width: gameW, height: gameH }}>
+          <div 
+            className="game-canvas-wrap" 
+            style={{ width: gameW, height: gameH }}
+            onTouchStart={handleWrapperTouch}
+            onClick={(e) => {
+              // Handle click only if directly on wrapper (not bubbled from canvas)
+              if (e.target === e.currentTarget) {
+                handleLock();
+              }
+            }}
+          >
             <div className="glass-shine" />
             <GameCanvas gameState={gameState} onTap={handleLock} />
           </div>

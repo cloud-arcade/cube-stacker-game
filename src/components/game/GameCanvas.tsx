@@ -21,6 +21,7 @@ interface GameCanvasProps {
 
 export function GameCanvas({ gameState, onTap }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const lastTouchTimeRef = useRef<number>(0);
   const animationRef = useRef<number>();
 
   const canvasWidth = GRID_WIDTH * CELL_SIZE;
@@ -123,10 +124,24 @@ export function GameCanvas({ gameState, onTap }: GameCanvasProps) {
       ref={canvasRef}
       width={canvasWidth}
       height={canvasHeight}
-      onClick={onTap}
+      onClick={(e) => {
+        // Prevent click if this was triggered by a recent touch (prevents double-fire on mobile)
+        const now = Date.now();
+        if (now - lastTouchTimeRef.current < 300) {
+          e.preventDefault();
+          return;
+        }
+        onTap();
+      }}
       onTouchStart={(e) => {
         e.preventDefault();
+        e.stopPropagation();
+        lastTouchTimeRef.current = Date.now();
         onTap();
+      }}
+      onTouchEnd={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
       }}
       className="game-canvas"
     />

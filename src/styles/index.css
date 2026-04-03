@@ -38,6 +38,12 @@ html, body {
   color: var(--color-text);
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
+  /* Mobile touch optimization - prevent double-tap zoom */
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #root {
@@ -802,6 +808,14 @@ html, body {
   position: relative;
   z-index: 1;
   border-radius: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Make canvas wrapper tappable for mobile */
+.game-canvas-wrap {
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Curved glass screen overlay - sits on top of canvas */
