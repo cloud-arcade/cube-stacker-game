@@ -357,8 +357,44 @@ export function GameScreen() {
         </div>
       </div>
 
-      {/* Decorative sparkle */}
-      <div className="sparkle-decor">✦</div>
+      {/* Techy corner decorations */}
+      <div className="tech-corners">
+        {/* Top-left corner bracket */}
+        <svg className="corner-bracket corner-tl" viewBox="0 0 60 60" fill="none">
+          <path d="M 0 15 L 0 0 L 15 0" stroke="rgba(96,165,250,0.6)" strokeWidth="2" strokeLinecap="square"/>
+          <path d="M 0 10 L 0 0 L 10 0" stroke="rgba(96,165,250,0.3)" strokeWidth="1" strokeLinecap="square"/>
+          <circle cx="18" cy="18" r="2" fill="rgba(96,165,250,0.8)">
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+        
+        {/* Top-right corner bracket */}
+        <svg className="corner-bracket corner-tr" viewBox="0 0 60 60" fill="none">
+          <path d="M 60 15 L 60 0 L 45 0" stroke="rgba(251,191,36,0.6)" strokeWidth="2" strokeLinecap="square"/>
+          <path d="M 60 10 L 60 0 L 50 0" stroke="rgba(251,191,36,0.3)" strokeWidth="1" strokeLinecap="square"/>
+          <circle cx="42" cy="18" r="2" fill="rgba(251,191,36,0.8)">
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+        
+        {/* Bottom-left corner bracket */}
+        <svg className="corner-bracket corner-bl" viewBox="0 0 60 60" fill="none">
+          <path d="M 0 45 L 0 60 L 15 60" stroke="rgba(74,222,128,0.6)" strokeWidth="2" strokeLinecap="square"/>
+          <path d="M 0 50 L 0 60 L 10 60" stroke="rgba(74,222,128,0.3)" strokeWidth="1" strokeLinecap="square"/>
+          <circle cx="18" cy="42" r="2" fill="rgba(74,222,128,0.8)">
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+        
+        {/* Bottom-right corner bracket */}
+        <svg className="corner-bracket corner-br" viewBox="0 0 60 60" fill="none">
+          <path d="M 60 45 L 60 60 L 45 60" stroke="rgba(248,113,113,0.6)" strokeWidth="2" strokeLinecap="square"/>
+          <path d="M 60 50 L 60 60 L 50 60" stroke="rgba(248,113,113,0.3)" strokeWidth="1" strokeLinecap="square"/>
+          <circle cx="42" cy="42" r="2" fill="rgba(248,113,113,0.8)">
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="2.2s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+      </div>
     </div>
   );
 }

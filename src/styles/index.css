@@ -411,6 +411,71 @@ html, body {
   justify-content: center;
   align-items: center;
   overflow: visible;
+  position: relative;
+  
+  /* Techy animated background */
+  background:
+    /* Radial glows - animated colors */
+    radial-gradient(ellipse 800px 600px at 20% 30%, rgba(96, 165, 250, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 600px 800px at 80% 70%, rgba(251, 191, 36, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 700px 700px at 50% 50%, rgba(74, 222, 128, 0.04) 0%, transparent 50%),
+    /* Dark base */
+    #080810;
+}
+
+/* Animated grid overlay */
+.screen--game::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.4;
+  background:
+    /* Perspective grid lines */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(96, 165, 250, 0.15) 39px,
+      rgba(96, 165, 250, 0.15) 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 39px,
+      rgba(96, 165, 250, 0.12) 39px,
+      rgba(96, 165, 250, 0.12) 40px
+    );
+  animation: gridPulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Scanline overlay for retro-tech feel */
+.screen--game::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.05;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0) 0px,
+    rgba(255, 255, 255, 0.03) 1px,
+    rgba(255, 255, 255, 0) 2px,
+    rgba(255, 255, 255, 0) 4px
+  );
+  pointer-events: none;
+  animation: scanlines 8s linear infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes scanlines {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
 }
 
 /* ── Main game box (glassmorphic lighter panel) ── */
@@ -429,6 +494,8 @@ html, body {
     0 0 60px rgba(60,100,180,0.06);
   /* Ensure smooth scaling */
   will-change: transform;
+  position: relative;
+  z-index: 1; /* Above background effects */
 }
 
 /* ─────────────────────────────────────────────
@@ -1073,10 +1140,122 @@ html, body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes scanlines {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-10px) translateX(5px); }
+  50% { transform: translateY(-5px) translateX(-5px); }
+  75% { transform: translateY(-15px) translateX(3px); }
+}
+
+@keyframes cornerGlow {
+  0%, 100% { opacity: 0.3; box-shadow: 0 0 20px currentColor; }
+  50% { opacity: 0.6; box-shadow: 0 0 40px currentColor; }
+}
+
+/* ============================================
+   Techy Background Decorations
+   ============================================ */
+/* Corner tech accents - only visible on game screen */
+.screen--game .sparkle-decor {
+  display: none; /* Hide the existing sparkle */
+}
+
+/* Techy corner brackets container */
+.tech-corners {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.corner-bracket {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.corner-tl {
+  top: 20px;
+  left: 20px;
+}
+
+.corner-tr {
+  top: 20px;
+  right: 20px;
+}
+
+.corner-bl {
+  bottom: 20px;
+  left: 20px;
+}
+
+.corner-br {
+  bottom: 20px;
+  right: 20px;
+}
+
+/* Add techy corner brackets */
+.screen--game {
+  /* Top-left corner bracket */
+  --corner-size: 60px;
+  --corner-thickness: 2px;
+  --corner-gap: 20px;
+}
+
+/* Floating particles background effect */
+.game-box::before {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  top: -200px;
+  left: -200px;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: float 20s ease-in-out infinite;
+  z-index: -1;
+}
+
+.game-box::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  bottom: -150px;
+  right: -150px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: float 25s ease-in-out infinite reverse;
+  z-index: -1;
+}
+
 /* ============================================
    Responsive — Tablets and small laptops
    ============================================ */
 @media (max-width: 600px) {
+  .corner-bracket {
+    width: 40px;
+    height: 40px;
+  }
+  .corner-tl, .corner-tr { top: 10px; }
+  .corner-bl, .corner-br { bottom: 10px; }
+  .corner-tl, .corner-bl { left: 10px; }
+  .corner-tr, .corner-br { right: 10px; }
+  
   .menu-card {
     padding: 20px 24px;
   }
@@ -1097,6 +1276,7 @@ html, body {
 @media (max-width: 420px) {
   .screen { padding: 8px; }
   .screen--game { padding: 4px; }
+  .tech-corners { display: none; } /* Hide tech corners on small screens */
   .game-box { border-radius: 10px; }
   .game-header { padding: 10px 12px 8px; min-height: 64px; }
   .level-gauge { width: 50px; height: 50px; }
@@ -1126,6 +1306,7 @@ html, body {
    ============================================ */
 @media (max-height: 520px) {
   .screen--game { padding: 2px; }
+  .tech-corners { display: none; } /* Hide on short screens */
   .game-header { padding: 6px 10px 4px; min-height: 50px; }
   .level-gauge { width: 42px; height: 42px; }
   .gauge-num { font-size: 15px; }
