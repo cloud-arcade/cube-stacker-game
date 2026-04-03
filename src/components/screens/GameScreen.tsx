@@ -15,7 +15,9 @@ import {
 } from '../../game/constants';
 import type { GameState as EngineState } from '../../game/types';
 
-const SIDEBAR_WIDTH = 80;
+const SIDEBAR_WIDTH_DESKTOP = 80;
+const SIDEBAR_WIDTH_MOBILE = 40;
+const SIDEBAR_WIDTH_NARROW = 32;
 
 // Helper to convert hex color to RGB string for rgba()
 function hexToRgb(hex: string): string {
@@ -32,24 +34,34 @@ export function GameScreen() {
   const [gameState, setGameState] = useState<EngineState | null>(null);
   const [sessionTime, setSessionTime] = useState(0);
   const [scale, setScale] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isNarrow, setIsNarrow] = useState(false);
   const sessionRef = useRef<ReturnType<typeof setInterval>>();
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Calculate scale to fit game in viewport
   useEffect(() => {
     const calculateScale = () => {
-      const gameW = GRID_WIDTH * CELL_SIZE + SIDEBAR_WIDTH * 2;
-      const gameH = GRID_HEIGHT * CELL_SIZE + 78 + 52; // header + footer heights
-      const padding = 24;
+      const mobile = window.innerWidth <= 420 || window.innerHeight <= 520;
+      const narrow = window.innerWidth <= 340;
+      setIsMobile(mobile);
+      setIsNarrow(narrow);
+      
+      const sidebarW = narrow ? SIDEBAR_WIDTH_NARROW : (mobile ? SIDEBAR_WIDTH_MOBILE : SIDEBAR_WIDTH_DESKTOP);
+      const gameW = GRID_WIDTH * CELL_SIZE + sidebarW * 2;
+      const headerH = mobile ? 60 : 78; // Compact header on mobile
+      const footerH = mobile ? 36 : 52; // Compact footer on mobile
+      const gameH = GRID_HEIGHT * CELL_SIZE + headerH + footerH;
+      const padding = mobile ? 8 : 24;
       
       const availableW = window.innerWidth - padding;
       const availableH = window.innerHeight - padding;
       
       const scaleX = availableW / gameW;
       const scaleY = availableH / gameH;
-      const newScale = Math.min(scaleX, scaleY, 1.2); // Cap at 1.2x max
+      const newScale = Math.min(scaleX, scaleY, mobile ? 1.5 : 1.2); // Allow slightly larger on mobile
       
-      setScale(Math.max(0.4, newScale)); // Min 0.4x
+      setScale(Math.max(0.5, newScale));
     };
 
     calculateScale();
@@ -90,17 +102,16 @@ export function GameScreen() {
   }, [dispatch, submitScore, gameOver, endSession]);
 
   const handleLock = useCallback(() => { getEngine().lockRow(); }, []);
-  const lastTouchRef = useRef<number>(0);
+  const lastInteractionRef = useRef<number>(0);
   
-  // Wrapper touch handler with its own debounce for wrapper-only touches
-  const handleWrapperTouch = useCallback((e: React.TouchEvent) => {
-    // Prevent double-tap issues
+  // Universal debounced handler for any interaction
+  const handleInteraction = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
+    // Prevent double-triggering from rapid events
     const now = Date.now();
-    if (now - lastTouchRef.current < 100) return;
-    lastTouchRef.current = now;
+    if (now - lastInteractionRef.current < 200) return;
+    lastInteractionRef.current = now;
     
-    e.preventDefault();
-    e.stopPropagation();
+    if (e) e.preventDefault();
     handleLock();
   }, [handleLock]);
   
@@ -110,10 +121,13 @@ export function GameScreen() {
     return <div className="screen screen--game"><div className="loading-text">Loading…</div></div>;
   }
 
+  // Responsive sidebar width
+  const sidebarWidth = isNarrow ? SIDEBAR_WIDTH_NARROW : (isMobile ? SIDEBAR_WIDTH_MOBILE : SIDEBAR_WIDTH_DESKTOP);
+
   // Derived values
   const gameW = GRID_WIDTH * CELL_SIZE;
   const gameH = GRID_HEIGHT * CELL_SIZE;
-  const totalW = SIDEBAR_WIDTH + gameW + SIDEBAR_WIDTH;
+  const totalW = sidebarWidth + gameW + sidebarWidth;
   const si = getStageForLevel(gameState.level);
   const stage = STAGES[si];
   const next = STAGES[si + 1];
@@ -147,6 +161,8 @@ export function GameScreen() {
           transform: `scale(${scale})`,
           transformOrigin: 'center center',
         }}
+        onTouchEnd={handleInteraction}
+        onClick={handleInteraction}
       >
 
         {/* ═══ TOP HEADER ═══ */}
@@ -263,7 +279,7 @@ export function GameScreen() {
         {/* ═══ CONTENT ROW ═══ */}
         <div className="game-content-row">
           {/* Left panel */}
-          <div className="game-panel game-panel--left" style={{ width: SIDEBAR_WIDTH }}>
+          <div className="game-panel game-panel--left" style={{ width: sidebarWidth }}>
             {rows.map(r => (
               <div
                 key={r.i}
@@ -287,20 +303,13 @@ export function GameScreen() {
           <div 
             className="game-canvas-wrap" 
             style={{ width: gameW, height: gameH }}
-            onTouchStart={handleWrapperTouch}
-            onClick={(e) => {
-              // Handle click only if directly on wrapper (not bubbled from canvas)
-              if (e.target === e.currentTarget) {
-                handleLock();
-              }
-            }}
           >
             <div className="glass-shine" />
             <GameCanvas gameState={gameState} onTap={handleLock} />
           </div>
 
           {/* Right panel */}
-          <div className="game-panel game-panel--right" style={{ width: SIDEBAR_WIDTH }}>
+          <div className="game-panel game-panel--right" style={{ width: sidebarWidth }}>
             {rows.map(r => (
               <div
                 key={r.i}

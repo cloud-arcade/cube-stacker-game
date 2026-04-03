@@ -131,6 +131,7 @@ export function GameCanvas({ gameState, onTap }: GameCanvasProps) {
           e.preventDefault();
           return;
         }
+        e.stopPropagation(); // Prevent bubbling to parent handlers
         onTap();
       }}
       onTouchStart={(e) => {

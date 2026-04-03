@@ -716,6 +716,7 @@ html, body {
 .game-content-row {
   display: flex;
   position: relative;  /* for ghost annotations */
+  flex-shrink: 0; /* Prevent shrinking on mobile */
 }
 
 /* ── Side panels (seamless with card) ── */
@@ -1247,6 +1248,14 @@ html, body {
    Responsive — Tablets and small laptops
    ============================================ */
 @media (max-width: 600px) {
+  /* Reduce padding on tablets for better screen usage */
+  .screen--game { 
+    padding: 4px; 
+  }
+  .game-box {
+    border-radius: 12px;
+  }
+  
   .corner-bracket {
     width: 40px;
     height: 40px;
@@ -1275,10 +1284,155 @@ html, body {
    ============================================ */
 @media (max-width: 420px) {
   .screen { padding: 8px; }
-  .screen--game { padding: 4px; }
-  .tech-corners { display: none; } /* Hide tech corners on small screens */
-  .game-box { border-radius: 10px; }
-  .game-header { padding: 10px 12px 8px; min-height: 64px; }
+  .screen--game { 
+    padding: 0 !important; /* Remove all padding on mobile - force override */
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* Prevent scrolling */
+  }
+  /* Show background decorations on mobile - reduce opacity for subtlety */
+  .screen--game::before {
+    opacity: 0.25; /* Lighter grid on mobile */
+  }
+  .screen--game::after {
+    opacity: 0.03; /* Subtle scanlines */
+  }
+  .tech-corners { display: none; }
+  
+  /* Make game box fullscreen on mobile - transparent to show grid bg */
+  .game-box { 
+    border-radius: 0; /* No rounded corners */
+    border: none; /* Remove border */
+    box-shadow: none; /* Remove shadows */
+    background: transparent !important; /* Show grid background through */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    overflow: visible; /* Allow scaled content */
+    cursor: pointer; /* Show it's tappable */
+    -webkit-tap-highlight-color: transparent;
+    /* Allow scaling via inline styles */
+    transform-origin: center center;
+  }
+  /* Hide floating orb effects on mobile */
+  .game-box::before,
+  .game-box::after {
+    display: none;
+  }
+  
+  /* Center the game content */
+  .game-content-row {
+    flex-shrink: 0;
+    width: auto;
+    max-width: 100%;
+    flex: 1; /* Take up available space */
+  }
+  
+  /* Compact header on mobile - show essential info */
+  .game-header { 
+    display: flex;
+    padding: 8px 12px;
+    min-height: auto;
+    width: 100%;
+    flex-shrink: 0;
+  }
+  
+  /* Make header layout more compact on mobile */
+  .header-layout {
+    width: 100%;
+    gap: 8px;
+  }
+  
+  /* Simplify gauge on mobile */
+  .gauge-area {
+    flex-shrink: 0;
+  }
+  
+  .gauge-sub {
+    display: none; /* Hide session timer on mobile */
+  }
+  
+  /* Compact tier info */
+  .header-center {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .tier-target {
+    font-size: 8px;
+  }
+  
+  .tier-bar-wrap {
+    margin-top: 2px;
+  }
+  
+  /* Compact best score */
+  .best-block {
+    flex-shrink: 0;
+  }
+  
+  /* Show compact footer on mobile */
+  .game-footer { 
+    display: flex;
+    padding: 6px 8px;
+    min-height: auto;
+  }
+  
+  .controls-row {
+    gap: 6px;
+  }
+  
+  .ctrl-label {
+    font-size: 8px;
+  }
+  
+  .ctrl-kbd {
+    width: 32px;
+    height: 16px;
+  }
+  
+  .ctrl-tap {
+    width: 18px;
+    height: 22px;
+  }
+  
+  /* Narrow side panels on mobile */
+  .game-panel {
+    width: 40px !important;
+  }
+  
+  /* Compact panel cells on mobile */
+  .panel-cell {
+    padding: 0 4px;
+  }
+  .panel-cell--R {
+    padding: 0 4px;
+  }
+  
+  /* Hide checkpoint names on mobile - just show dots */
+  .cp-name {
+    display: none;
+  }
+  
+  /* Smaller checkpoint markers */
+  .cp-dot {
+    font-size: 8px;
+  }
+  .cp-pip {
+    width: 6px;
+    height: 6px;
+  }
+  
+  /* Canvas takes remaining space */
+  .game-canvas-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
   .level-gauge { width: 50px; height: 50px; }
   .gauge-num { font-size: 17px; }
   .tier-current { font-size: 12px; }
@@ -1305,9 +1459,112 @@ html, body {
    Responsive — Very short screens (landscape mobile)
    ============================================ */
 @media (max-height: 520px) {
-  .screen--game { padding: 2px; }
-  .tech-corners { display: none; } /* Hide on short screens */
-  .game-header { padding: 6px 10px 4px; min-height: 50px; }
+  .screen--game { 
+    padding: 0 !important; /* Fullscreen on landscape mobile */
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+  /* Show background effects on landscape - subtle */
+  .screen--game::before {
+    opacity: 0.2;
+  }
+  .screen--game::after {
+    opacity: 0.02;
+  }
+  .tech-corners { display: none; }
+  
+  /* Fullscreen game box on landscape mobile - transparent bg */
+  .game-box {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+    transform-origin: center center;
+  }
+  .game-box::before,
+  .game-box::after {
+    display: none;
+  }
+  
+  /* Center the game content */
+  .game-content-row {
+    flex-shrink: 0;
+    width: auto;
+    max-width: 100%;
+    flex: 1; /* Take up available space */
+  }
+  
+  /* Compact header on landscape mobile */
+  .game-header { 
+    display: flex;
+    padding: 6px 10px;
+    min-height: auto;
+    width: 100%;
+    flex-shrink: 0;
+  }
+  
+  /* Simplify header on landscape */
+  .gauge-sub {
+    display: none;
+  }
+  
+  .tier-target {
+    display: none;
+  }
+  
+  .tier-next {
+    display: none;
+  }
+  
+  /* Show compact footer on landscape */
+  .game-footer { 
+    display: flex;
+    padding: 4px 6px;
+    min-height: auto;
+  }
+  
+  .ctrl-label {
+    font-size: 7px;
+  }
+  
+  .ctrl-kbd, .ctrl-tap {
+    width: 24px;
+    height: 14px;
+  }
+  
+  /* Narrow side panels on landscape */
+  .game-panel {
+    width: 36px !important;
+  }
+  
+  /* Hide checkpoint names - just show indicators */
+  .cp-name {
+    display: none;
+  }
+  
+  .cp-dot {
+    font-size: 8px;
+  }
+  .cp-pip {
+    width: 5px;
+    height: 5px;
+  }
+  
+  /* Canvas takes remaining space */
+  .game-canvas-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
   .level-gauge { width: 42px; height: 42px; }
   .gauge-num { font-size: 15px; }
   .gauge-sub { display: none; }
@@ -1334,11 +1591,128 @@ html, body {
 @media (max-height: 400px) {
   .menu-stages { display: none; }
   .menu-footer-inner { display: none; }
-  .screen--game { padding: 0; }
-  .game-footer { display: none; }
-  .game-header { min-height: 40px; padding: 4px 8px 2px; }
+  .screen--game { 
+    padding: 0 !important; 
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+  /* Very subtle background on extra short screens */
+  .screen--game::before {
+    opacity: 0.15;
+  }
+  .screen--game::after {
+    opacity: 0.02;
+  }
+  
+  /* Fullscreen styling - transparent bg */
+  .game-box {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+    transform-origin: center center;
+  }
+  
+  /* Center the game content */
+  .game-content-row {
+    flex-shrink: 0;
+    width: auto;
+    max-width: 100%;
+    flex: 1; /* Take up available space */
+  }
+  
+  /* Very compact header for extra short screens */
+  .game-header { 
+    display: flex;
+    padding: 4px 8px;
+    min-height: auto;
+    width: 100%;
+    flex-shrink: 0;
+  }
+  
+  /* Minimal header on very short screens */
+  .gauge-sub {
+    display: none;
+  }
+  
+  .tier-target {
+    display: none;
+  }
+  
+  .tier-next {
+    display: none;
+  }
+  
+  .tier-bar-wrap {
+    display: none;
+  }
+  
+  /* Minimal footer on extra short screens */
+  .game-footer { 
+    display: flex;
+    padding: 3px 4px;
+    min-height: auto;
+  }
+  
+  .ctrl-label {
+    font-size: 6px;
+  }
+  
+  .ctrl-kbd, .ctrl-tap {
+    width: 20px;
+    height: 12px;
+  }
+  
+  /* Minimal side panels on extra short screens */
+  .game-panel {
+    width: 32px !important;
+  }
+  
+  .cp-dot, .cp-pip {
+    display: none;
+  }
+  
+  /* Canvas takes remaining space */
+  .game-canvas-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 340px) {
-  .game-panel--right { display: none; }
+  /* Super narrow screens - minimal panels */
+  .game-panel {
+    width: 32px !important;
+  }
+  
+  .panel-cell {
+    padding: 0 2px;
+  }
+  
+  /* Extra compact header on very small screens */
+  .level-gauge { 
+    width: 44px; 
+    height: 44px; 
+  }
+  
+  .gauge-num { 
+    font-size: 15px; 
+  }
+  
+  .tier-current { 
+    font-size: 10px; 
+  }
+  
+  .best-num { 
+    font-size: 16px; 
+  }
 }
